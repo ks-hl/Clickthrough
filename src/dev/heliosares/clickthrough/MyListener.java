@@ -7,6 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Container;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.type.HangingSign;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
@@ -18,7 +19,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
@@ -73,10 +73,8 @@ public class MyListener implements Listener {
     public void onPlayerInteractEvent(PlayerInteractEvent e) {
         if (e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         if (e.getClickedBlock() == null) return;
-        if (!(e.getClickedBlock().getBlockData() instanceof WallSign wallSign)) return;
         if (!e.getPlayer().hasPermission("clickthrough.use")) return;
-
-        Sign sign = (Sign) e.getClickedBlock().getState();
+        if (!(e.getClickedBlock().getState() instanceof Sign sign)) return;
 
         if (isChestShopLoaded) {
             if (ChestShopSign.isValid(sign)) {
@@ -84,7 +82,15 @@ public class MyListener implements Listener {
             }
         }
 
-        Block behind = e.getClickedBlock().getRelative(wallSign.getFacing().getOppositeFace());
+        BlockFace facing;
+        if (e.getClickedBlock().getBlockData() instanceof WallSign wallSign) {
+            facing = wallSign.getFacing();
+        } else if (e.getClickedBlock().getBlockData() instanceof HangingSign) {
+            facing = BlockFace.DOWN; // on ceiling
+        } else {
+            facing = BlockFace.UP; // on ground
+        }
+        Block behind = e.getClickedBlock().getRelative(facing.getOppositeFace());
         if (!doClickThroughTo(behind.getType())) return;
 
         if (tryToOpenChest(e.getPlayer(), behind)) {
