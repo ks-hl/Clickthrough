@@ -1,0 +1,15 @@
+
+# The blocks which the plugin will look for behind item frames and signs.
+# Use values from https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+# Only items which have an actual inventory (such as chests and barrels) may be used,
+# except CRAFTING_TABLE, which may also be used.
+# Having SHULKER_BOX in this list allows for any color of shulker box.
+
+containers:
+  - CHEST
+  - TRAPPED_CHEST
+  - BARREL
+
+# Whether to automatically check for updates periodically
+
+check-for-updates: true

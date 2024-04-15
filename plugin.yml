@@ -1,0 +1,11 @@
+name: Clickthrough
+version: "${project.version}"
+main: dev.heliosares.clickthrough.Clickthrough
+description: Allows opening chests by clicking attached signs or itemframes. 
+api-version: 1.16
+softdepend: [ChestShop]
+
+commands:
+    clickthrough:
+        usage: /clickthrough
+        description: Base command
