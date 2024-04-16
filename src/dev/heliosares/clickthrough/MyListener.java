@@ -19,6 +19,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerSignOpenEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
@@ -71,7 +73,8 @@ public class MyListener implements Listener {
         if (e.getClickedBlock() == null) return;
         if (!e.getPlayer().hasPermission("clickthrough.use")) return;
         if (!(e.getClickedBlock().getState() instanceof Sign sign)) return;
-        if (e.getPlayer().isSneaking()) return;
+        if (e.getHand() != EquipmentSlot.HAND) return;
+        if (e.useInteractedBlock() == Result.DENY) return;
 
         ItemStack itemInHand = e.getPlayer().getInventory().getItemInMainHand();
         if (itemInHand.getType() == Material.GLOW_INK_SAC) return;
@@ -93,6 +96,13 @@ public class MyListener implements Listener {
         }
         Block behind = e.getClickedBlock().getRelative(facing.getOppositeFace());
         if (!doClickThroughTo(behind.getType())) return;
+
+        if (e.getPlayer().isSneaking()) {
+            e.getPlayer().setSneaking(false); // Makes it so the click is actually processed to open the sign
+            e.setUseInteractedBlock(Result.ALLOW);
+            e.setUseItemInHand(Result.DENY);
+            return;
+        }
 
         if (tryToOpenChest(e.getPlayer(), behind)) {
             e.setCancelled(true);
