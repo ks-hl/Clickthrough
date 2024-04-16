@@ -45,10 +45,6 @@ public class MyListener implements Listener {
         if (!e.getPlayer().hasPermission("clickthrough.use")) return;
         if (e.getPlayer().isSneaking()) return;
 
-        ItemStack itemInHand = e.getPlayer().getInventory().getItemInMainHand();
-        if (itemInHand.getType() == Material.GLOW_INK_SAC) return;
-        if (itemInHand.getType().toString().endsWith("_DYE")) return;
-
         ItemFrame itemframe = (ItemFrame) e.getRightClicked();
         itemframe.getItem();
         if (itemframe.getItem().getType() == Material.AIR) {
@@ -75,6 +71,11 @@ public class MyListener implements Listener {
         if (e.getClickedBlock() == null) return;
         if (!e.getPlayer().hasPermission("clickthrough.use")) return;
         if (!(e.getClickedBlock().getState() instanceof Sign sign)) return;
+        if (e.getPlayer().isSneaking()) return;
+
+        ItemStack itemInHand = e.getPlayer().getInventory().getItemInMainHand();
+        if (itemInHand.getType() == Material.GLOW_INK_SAC) return;
+        if (itemInHand.getType().toString().endsWith("_DYE")) return;
 
         if (isChestShopLoaded) {
             if (ChestShopSign.isValid(sign)) {
